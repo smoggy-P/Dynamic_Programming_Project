@@ -17,7 +17,7 @@ class Battery(object):
         self.umax_d = 5.0
     
     def forward(self, u, dt):
-        """_summary_
+        """Forward dynamics for battery
 
         Args:
             u (float): charge rate
@@ -25,7 +25,7 @@ class Battery(object):
 
         Returns:
             float: amount of charge to be moved to/from(+/-) 
-                   total amount of charge provided by power supplier
+                   total amount of charge provided by power supplier(kW)
         """
 
         # clip the charge rate
@@ -34,11 +34,11 @@ class Battery(object):
         # when charge to battery
         if u >= 0:
             c_hat = min(self.c + self.alpha_c * u * dt, self.cap)
-            result = (self.c - c_hat)/self.alpha_c
+            result = (self.c - c_hat)/self.alpha_c/dt
         # when charge from battery
         else:
             c_hat = max(self.c + u * dt / self.alpha_d, 0)
-            result = (self.c - c_hat)*self.alpha_d
+            result = (self.c - c_hat)*self.alpha_d/dt
         self.c = c_hat
         return result
 
@@ -46,7 +46,8 @@ class Plant(object):
     """Dynamics for entire model
 
     Args:
-        object (_type_): _description_
+        dt (float): time
+        x (float): peak power
     """
 
     def __init__(self):
@@ -55,4 +56,4 @@ class Plant(object):
         self.x = 0
     
     def forward(self, u, w):
-        self.x = max(self.x, )
+        self.x = max(self.x, w + self.battery.forward(u, self.dt))
