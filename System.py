@@ -37,12 +37,12 @@ class Battery(object):
         # when charge to battery
         if u >= 0:
             c_hat = min(self.c + self.alpha_c * u * dt, self.cap)
-            result = (c_hat - self.c)/self.alpha_c/dt 
+            real_u = (c_hat - self.c)/self.alpha_c/dt 
         # when charge from battery
         else:
             c_hat = max(self.c + u * dt / self.alpha_d, 0)
-            result = (c_hat - self.c)*self.alpha_d/dt
-        return result
+            real_u = (c_hat - self.c)*self.alpha_d/dt
+        return real_u
     
     def reset(self, init_c):
         self.c = init_c
@@ -80,8 +80,8 @@ class Plant(object):
     
     def step(self, u):
         self.demand.step()
-        self.battery.step(u, self.dt)
-        self.x = max(self.x, self.demand.w + u)
+        real_u = self.battery.step(u, self.dt)
+        self.x = max(self.x, self.demand.w + real_u)
         return [self.x, self.demand.w, self.battery.c]
 
     def reset(self):
