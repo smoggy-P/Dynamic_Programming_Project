@@ -73,3 +73,12 @@ class Demand_Dataset(Dataset):
     def __getitem__(self, index):
         return self.features[index], self.labels[index]
     
+def data_preprocess(data, type):
+    if type == "Month":
+        data = (data - 6.5136612021857925) / 3.451237192257619
+    elif type == "Day":
+        data = (data - 15.75683060109289) / 8.811537990337259
+    elif type == "Hour":
+        data = (data - 11.5) / 6.922193119482051
+    return data
+    

@@ -7,7 +7,8 @@ class Policy(object):
     def __init__(self) -> None:
         pass
     
-    def select_action(self, state):
-        x, w, c= state
+    def select_action(self, demond_state, power_supply_state):
+        x, c = power_supply_state
+        w = demond_state
         u = x - w
         return u
