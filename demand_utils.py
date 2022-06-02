@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 from torch import optim
 from torch.nn import functional as F
+from torch.utils.data import Dataset, DataLoader
 
 class MLP(nn.Module):
     def __init__(self, input_size, output_size, n_layers, 
@@ -35,12 +36,12 @@ class MLP(nn.Module):
        
         return out
 
-class Plant_Model(nn.Module):
-    def __init__(self):
-        super(Plant_Model, self).__init__()
-        self.device = 'cuda'
+class Demand_Model(nn.Module):
+    def __init__(self, device):
+        super(Demand_Model, self).__init__()
+        self.device = device
         self.learning_rate = 0.01
-        mean = MLP(input_size=2, output_size=1, n_layers=2, size=64).to(self.device)
+        mean = MLP(input_size=3, output_size=1, n_layers=2, size=128).to(self.device)
         logstd = torch.zeros(1, requires_grad=True, device=self.device)
         self.parameters = (mean, logstd)
         self.optimizer = optim.Adam([logstd] + list(mean.parameters()), lr=self.learning_rate)
@@ -60,3 +61,15 @@ class Plant_Model(nn.Module):
         self.optimizer.step()
         return loss
 
+
+class Demand_Dataset(Dataset):
+    def __init__(self, features, labels):
+        self.features = features
+        self.labels = labels
+    
+    def __len__(self):
+        return len(self.features)
+    
+    def __getitem__(self, index):
+        return self.features[index], self.labels[index]
+    
