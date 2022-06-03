@@ -44,4 +44,4 @@ class Policy(object):
     def select_action(self, plant):
         w_hat = self.estimator.estimate(plant)
         u = plant.x - w_hat
-        return u
+        return u, w_hat
