@@ -41,51 +41,14 @@ class Battery(object):
         else:
             c_hat = max(self.c + u * dt / self.alpha_d, 0)
             real_u = (c_hat - self.c)*self.alpha_d/dt
+        self.c = c_hat
         return real_u
     
     def reset(self, init_c):
-        self.c = init_c
-        
-
-class Demand(object):
-    """Dynamics for demand
-
-    Args:
-        object (_type_): _description_
-    """
-    def __init__(self, dt):
-        self.w = None
-        self.day = None
-        self.hour = None
-        self.month = None
-        self.dt = dt
-        self.demand_model = Demand_Model(device = 'cpu')
-        PATH = './demand_model_weights.pth'
-        self.demand_model.load_state_dict(torch.load(PATH))
-    
-    def step(self):
-        self.hour += self.dt
-        if self.hour > 24:
-            self.hour -= 24
-            self.day += 1
-        if self.day > 30:
-            self.day = 0
-            self.month += 1
-        pro_month = data_preprocess(self.month, "Month")
-        pro_day = data_preprocess(self.day, "Day")
-        pro_hour = data_preprocess(self.hour, "Hour")
-        features = torch.tensor([pro_month, pro_day, pro_hour], dtype=torch.float32)
-        self.w = self.demand_model.transition_step(features).item()
-        return self.w
-
-    def reset(self, init_w, init_month, init_day, init_hour):
-        self.w = init_w
-        self.month = init_month
-        self.day = init_day
-        self.hour = init_hour
+        self.c = init_c    
 
 
-class Power_Supply(object):
+class Plant(object):
     """Dynamics for power supply
     Args:
         dt (float): time
@@ -96,13 +59,25 @@ class Power_Supply(object):
         self.battery = Battery()
         self.dt = dt # one hour
         self.x = 0
+        self.day = None
+        self.hour = None
     
     def step(self, u, real_w):
+        self.hour += self.dt
+        if self.hour > 24:
+            self.hour -= 24
+            self.day += 1
+        if self.day > 30:
+            self.day = 0
+            self.month += 1
         real_u = self.battery.step(u, self.dt)
         self.x = max(self.x, real_w + real_u)
         return [self.x, self.battery.c]
 
-    def reset(self, init_battery):
+    def reset(self, init_battery, init_month, init_day, init_hour):
+        self.month = init_month
+        self.day = init_day
+        self.hour = init_hour
         self.battery.reset(init_battery)
         self.x = 0
         return [self.x, self.battery.c]
