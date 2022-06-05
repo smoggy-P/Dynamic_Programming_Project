@@ -1,5 +1,5 @@
-from System_copy import *
-from Policy_copy import *
+from System import *
+from Policy import *
 
 num_simulation = 100
 
@@ -10,6 +10,6 @@ if __name__ == "__main__":
     
     plant.reset(init_battery=3, init_month=10, init_day=1, init_hour=0)
     for _ in range(num_simulation):
-        u = controller.select_action(plant)
+        u, w_hat = controller.select_action(plant)
         plant.step(u, real_w=2)  # peak, demond, battery
         print(plant.battery.c, u, plant.x)
