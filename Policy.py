@@ -1,8 +1,11 @@
 from zmq import device
 import joblib
 import torch
+from torch.autograd import Variable
+import numpy as np
+from LSTM import LSTM
 
-class Estimation_from_time(object):
+class Estimator(object):
     """estimate energy demand for next time step
 
     Args:
@@ -15,25 +18,12 @@ class Estimation_from_time(object):
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.demand_model = torch.load("demand_esti_model.pkl", map_location=self.device)
         self.demand_model.eval()
-        self.data_scaler = joblib.load("demand_scaler.pkl")
+        self.data_scaler = joblib.load("data_scaler.pkl")
     
-    def estimate(self, plant):
+    def estimate(self, x_pre):
         # estimation of next time step
-        hour = plant.hour + plant.dt
-        day = plant.day
-        month = plant.month
-        if hour > 24:
-            hour -= 24
-            day = plant.day + 1
-            if day > 30:
-                day = 0
-                month = plant.month + 1
-        pro_month = data_preprocess(month, "Month")
-        pro_day = data_preprocess(day, "Day")
-        pro_hour = data_preprocess(hour, "Hour")
-        features = torch.tensor([pro_month, pro_day, pro_hour], dtype=torch.float32, device=self.device)
-        return self.demand_model.transition_step(features).item()
-        
+        a = self.data_scaler.transform(np.array([[x_pre]])).reshape(-1,1,1)
+        return self.data_scaler.inverse_transform(self.demand_model(Variable(torch.Tensor(a)).cuda()).cpu().data.numpy())[0,0]
 
 class Policy(object):
     """Policy by dynamic programming
@@ -42,9 +32,9 @@ class Policy(object):
         object (_type_): _description_
     """
     def __init__(self):
-        self.estimator = Estimation_from_time()
+        self.estimator = Estimator()
     
     def select_action(self, plant):
-        w_hat = self.estimator.estimate(plant)
-        u = plant.x - w_hat
-        return u, w_hat
+        l_hat = self.estimator.estimate(plant.l)
+        u = plant.p - l_hat
+        return u, l_hat
