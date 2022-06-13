@@ -66,10 +66,10 @@ class Plant(object):
         self.l = real_l
         return [self.p, self.battery.c, self.l]
 
-    def reset(self, init_battery):
+    def reset(self, init_battery, init_peak, init_load):
         self.battery.reset(init_battery)
-        self.p = 0
-        self.l = 0
+        self.p = init_peak
+        self.l = init_load
         return [self.p, self.battery.c, self.l]
         
         
