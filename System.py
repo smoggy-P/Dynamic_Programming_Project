@@ -1,5 +1,3 @@
-from demand_utils import *
-
 class Battery(object):
     """Battery dynamics
 
@@ -52,34 +50,26 @@ class Plant(object):
     """Dynamics for power supply
     Args:
         dt (float): time
-        x (float): peak power
+        p (float): peak power
+        l (float): load
     """
 
     def __init__(self, dt):
         self.battery = Battery()
         self.dt = dt # one hour
-        self.x = 0
-        self.day = None
-        self.hour = None
+        self.p = 0
+        self.l = 0
     
-    def step(self, u, real_w):
-        self.hour += self.dt
-        if self.hour > 24:
-            self.hour -= 24
-            self.day += 1
-        if self.day > 30:
-            self.day = 0
-            self.month += 1
+    def step(self, u, real_l):
         real_u = self.battery.step(u, self.dt)
-        self.x = max(self.x, real_w + real_u)
-        return [self.x, self.battery.c]
+        self.p = max(self.p, real_l + real_u)
+        self.l = real_l
+        return [self.p, self.battery.c, self.l]
 
-    def reset(self, init_battery, init_month, init_day, init_hour):
-        self.month = init_month
-        self.day = init_day
-        self.hour = init_hour
+    def reset(self, init_battery, init_peak, init_load):
         self.battery.reset(init_battery)
-        self.x = 0
-        return [self.x, self.battery.c]
+        self.p = init_peak
+        self.l = init_load
+        return [self.p, self.battery.c, self.l]
         
         
