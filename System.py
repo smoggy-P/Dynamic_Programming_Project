@@ -13,8 +13,6 @@ class Battery(object):
         self.cap = 7.0
         self.alpha_c = 0.96
         self.alpha_d = 0.87
-        self.umax_c = 4.0
-        self.umax_d = 5.0
     
     def step(self, u, dt):
         """step dynamics for battery
@@ -27,18 +25,14 @@ class Battery(object):
             float: amount of charge to be moved to/from(+/-) 
                    total amount of charge provided by power supplier(kW)
         """
-
-        # clip the charge rate
-        u = max(min(u, self.umax_c), -self.umax_d)
-
-        # when charge to battery
+        # when charge to battery  
         if u >= 0:
             c_hat = min(self.c + self.alpha_c * u * dt, self.cap)
-            real_u = (c_hat - self.c)/self.alpha_c/dt 
+            real_u = (c_hat - self.c)/self.alpha_c/dt  
         # when charge from battery
         else:
             c_hat = max(self.c + u * dt / self.alpha_d, 0)
-            real_u = (c_hat - self.c)*self.alpha_d/dt
+            real_u = (c_hat - self.c)*self.alpha_d/dt    
         self.c = c_hat
         return real_u
     
@@ -56,14 +50,14 @@ class Plant(object):
 
     def __init__(self, dt):
         self.battery = Battery()
-        self.dt = dt # one hour
         self.p = 0
         self.l = 0
+        self.dt = dt
     
     def step(self, u, real_l):
         real_u = self.battery.step(u, self.dt)
-        self.p = max(self.p, real_l + real_u)
-        self.l = real_l
+        self.p = max(self.p, real_l + real_u)   #TODO check real_u
+        self.l = real_l 
         return [self.p, self.battery.c, self.l]
 
     def reset(self, init_battery, init_peak, init_load):
@@ -71,5 +65,3 @@ class Plant(object):
         self.p = init_peak
         self.l = init_load
         return [self.p, self.battery.c, self.l]
-        
-        
