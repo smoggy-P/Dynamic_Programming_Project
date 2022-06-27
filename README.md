@@ -2,7 +2,7 @@
 This is a repository for course project in [SC42110 Dynamic Programming and Stochastic Control](https://www.dcsc.tudelft.nl/~mohajerin/DP.html). The project solves a battery management problem which is commonly described as "Peak shaving" problem.
 
 ## Usage
-To understand what's going on, please have a look at `main.ipynb`. It contains many explanations along the code.
+To understand what's going on, please have a look at `main.ipynb`. It contains many explanations along with the code.
 
 To do DP experiments with high resolution, run
 ```
