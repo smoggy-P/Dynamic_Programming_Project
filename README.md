@@ -1,6 +1,14 @@
 # DP_Project
 This is a repository for course project in [SC42110 Dynamic Programming and Stochastic Control](https://www.dcsc.tudelft.nl/~mohajerin/DP.html). The project solves a battery management problem which is commonly described as "Peak shaving" problem.
 
+## Usage
+To understand what's going on, please have a look at `main.ipynb`. It contains many explanations along the code.
+
+To do DP experiments with high resolution, run
+```
+. do_DP.bash
+```
+
 ## Data source
 This dataset is made available under the “Creative Commons Attribution 4.0 International (CC BY 4.0)” license.
 
@@ -15,4 +23,4 @@ The dataset is pruned to contain one year starting from October 2007 until Octob
 The first column is the date in dd-mm-yyyy format, the second column is time in hh:mm:ss format, and the third column is the electrical load at the specific time in kW.
 
 ## Dependency
-joblib
+joblib, pytorch, numpy, pandas
