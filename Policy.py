@@ -16,9 +16,9 @@ class Estimator(object):
     """
     def __init__(self):
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        self.demand_model = torch.load("demand_esti_model.pkl", map_location=self.device)
+        self.demand_model = torch.load("saved_models/demand_esti_model.pkl", map_location=self.device)
         self.demand_model.eval()
-        self.data_scaler = joblib.load("data_scaler.pkl")
+        self.data_scaler = joblib.load("saved_models/data_scaler.pkl")
     
     def estimate(self, l_pre):
         # estimation of next time step
