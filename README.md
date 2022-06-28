@@ -9,6 +9,9 @@ To do DP experiments with high resolution, run
 . do_DP.bash
 ```
 
+## Result
+![](fig/one_day.png)
+
 ## Data source
 This dataset is made available under the “Creative Commons Attribution 4.0 International (CC BY 4.0)” license.
 
@@ -23,4 +26,11 @@ The dataset is pruned to contain one year starting from October 2007 until Octob
 The first column is the date in dd-mm-yyyy format, the second column is time in hh:mm:ss format, and the third column is the electrical load at the specific time in kW.
 
 ## Dependency
-joblib, pytorch, numpy, pandas
+```
+joblib==1.1.0
+numpy==1.19.5
+Policy==1.0.0
+pyzmq==23.2.0
+torch==1.10.2
+tqdm==4.64.0
+```
