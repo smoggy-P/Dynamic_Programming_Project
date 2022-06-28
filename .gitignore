@@ -1,3 +1,6 @@
 __pycache__/**
 .vscode/**
 P_trans**.pkl
+saved_models/Action_table_dt_1.pt
+saved_models/Action_table_dt_5.pt
+saved_models/Action_table_dt_10.pt
