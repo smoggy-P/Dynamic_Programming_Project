@@ -1,4 +1,4 @@
-# DP_Project
+# Dynamic_Programming_Project
 This is a repository for course project in [SC42110 Dynamic Programming and Stochastic Control](https://www.dcsc.tudelft.nl/~mohajerin/DP.html). The project solves a battery management problem which is commonly described as "Peak shaving" problem.
 
 ## Usage
