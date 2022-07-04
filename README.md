@@ -6,7 +6,7 @@ To understand what's going on, please have a look at `main.ipynb`. It contains m
 
 To do DP experiments with high resolution, run
 ```
-. do_DP.bash
+. DP_high_resolution.bash
 ```
 
 ## Result
